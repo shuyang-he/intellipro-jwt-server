@@ -1,6 +1,7 @@
-const Users = require("../models/users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Users = require("../models/users");
+const SECRET = require("../auth/secret");
 
 const cookieAge = 60 * 60 * 1000;
 
@@ -32,49 +33,92 @@ const register = async (req, res, next) => {
     if (!error.statusCode) {
       error.statusCode = 500;
     }
-    next(error);
+    res.status(500).json({
+      success: false,
+      message: error,
+    });
   }
 };
 
 const login = async (req, res, next) => {
   const username = req.body.username;
   const password = req.body.password;
-  const query = await Users.findOne({ username: username });
-  if (query === null) {
-    res.status(400).json({
-      exist: false,
-      valid: true,
-    });
-  } else {
-    const validPw = bcrypt.compare(password, query.password);
-    if (validPw) {
-      const token = jwt.sign(
-        {
-          username: username,
-          password: password,
-        },
-        "SeCrEt",
-        { expiresIn: "1h" }
-      );
-      res.cookie("jwt", token, { maxAge: cookieAge });
-      res.status(200).json({
-        exist: true,
+  try {
+    const query = await Users.findOne({ username: username });
+    if (query === null) {
+      res.status(400).json({
+        exist: false,
         valid: true,
       });
     } else {
-      res.status(400).json({
-        exist: true,
-        valid: false,
-      });
+      const validPw = bcrypt.compare(password, query.password);
+      if (validPw) {
+        const token = jwt.sign(
+          {
+            username: username,
+          },
+          SECRET,
+          { expiresIn: "1h" }
+        );
+        res.cookie("jwt", token, { maxAge: cookieAge });
+        res.status(200).json({
+          exist: true,
+          valid: true,
+        });
+      } else {
+        res.status(400).json({
+          exist: true,
+          valid: false,
+        });
+      }
     }
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    res.status(500).json({
+      success: false,
+      message: error,
+    });
+  }
+};
+
+const profile = async (req, res, next) => {
+  const data = req.data;
+  try {
+    const query = await Users.findOne({ username: data.username });
+    if (query === null) {
+      res.status(400).json({
+        exist: false,
+      });
+    } else {
+      if (query.data === null || query.data === undefined) {
+        res.status(200).json({
+          data: {},
+        });
+      } else {
+        res.status(200).json({
+          data: query.data,
+        });
+      }
+    }
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    res.status(500).json({
+      success: false,
+      message: error,
+    });
   }
 };
 
 const logout = async (req, res, next) => {
   res.clearCookie("jwt");
-  res.status(200).json({ logout: true });
+  res.status(200).json({ success: true });
 };
 
 module.exports.register = register;
 module.exports.login = login;
+module.exports.profile = profile;
 module.exports.logout = logout;
