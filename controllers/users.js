@@ -51,7 +51,7 @@ const login = async (req, res, next) => {
         valid: true,
       });
     } else {
-      const validPw = bcrypt.compare(password, query.password);
+      const validPw = await bcrypt.compare(password, query.password);
       if (validPw) {
         const token = jwt.sign(
           {
