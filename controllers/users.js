@@ -61,12 +61,12 @@ const login = async (req, res, next) => {
           SECRET,
           { expiresIn: "1h" }
         );
-        res.cookie("jwt", token, { maxAge: cookieAge });
         res.status(200).json({
           success: true,
           exist: true,
           valid: true,
           data: query,
+          token: token,
         });
       } else {
         res.status(400).json({
@@ -114,7 +114,6 @@ const profile = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-  res.clearCookie("jwt");
   res.status(200).json({ success: true });
 };
 
