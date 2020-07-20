@@ -47,6 +47,7 @@ const login = async (req, res, next) => {
     const query = await Users.findOne({ username: username });
     if (query === null) {
       res.status(400).json({
+        success: false,
         exist: false,
         valid: true,
       });
@@ -62,11 +63,14 @@ const login = async (req, res, next) => {
         );
         res.cookie("jwt", token, { maxAge: cookieAge });
         res.status(200).json({
+          success: true,
           exist: true,
           valid: true,
+          data: query,
         });
       } else {
         res.status(400).json({
+          success: false,
           exist: true,
           valid: false,
         });
@@ -89,18 +93,14 @@ const profile = async (req, res, next) => {
     const query = await Users.findOne({ username: data.username });
     if (query === null) {
       res.status(400).json({
+        success: false,
         exist: false,
       });
     } else {
-      if (query.data === null || query.data === undefined) {
-        res.status(200).json({
-          data: {},
-        });
-      } else {
-        res.status(200).json({
-          data: query.data,
-        });
-      }
+      res.status(200).json({
+        success: true,
+        data: query,
+      });
     }
   } catch (error) {
     if (!error.statusCode) {
