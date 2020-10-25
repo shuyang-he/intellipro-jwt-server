@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  app:
+    image: node:12-alpine
+    command: sh -c "npm install && npm start"
+    ports:
+      - 8000:8000
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      MONGO_INITDB_DATABASE: intellipro-jwt
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+
+  database:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: intellipro-jwt
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret

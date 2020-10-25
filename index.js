@@ -5,9 +5,17 @@ const mongoose = require("mongoose");
 const users = require("./routes/users");
 
 const PORT = process.env.PORT || 8000;
+const MONGO_INITDB_DATABASE = process.env.MONGO_INITDB_DATABASE || "intellipro-jwt";
+const MONGO_INITDB_ROOT_USERNAME = process.env.MONGO_INITDB_ROOT_USERNAME || "root";
+const MONGO_INITDB_ROOT_PASSWORD = process.env.MONGO_INITDB_ROOT_PASSWORD || "secret";
+
+console.log(MONGO_INITDB_DATABASE);
+console.log(MONGO_INITDB_ROOT_USERNAME);
+console.log(MONGO_INITDB_ROOT_PASSWORD);
+
 const corsOptions = {
-  origin: "http://localhost:3000/",
-  methods: ["GET", "POST"],
+  // origin: "http://localhost:3000/",
+  methods: ["GET", "POST", "PUT"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
@@ -17,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use("/api/users", users);
 
-const mongoURI = "mongodb://localhost:27017/project0";
+const mongoURI = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@database:27017/${MONGO_INITDB_DATABASE}`;
 const connectOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
