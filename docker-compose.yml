@@ -1,6 +1,28 @@
 version: "3.8"
 
 services:
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: intellipro-jwt
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      MONGO_INITDB_DATABASE: intellipro-jwt
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+
   app:
     image: node:12-alpine
     command: sh -c "npm install && npm start"
@@ -11,17 +33,5 @@ services:
       - ./:/app
     environment:
       MONGO_INITDB_DATABASE: intellipro-jwt
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: secret
-
-  database:
-    image: mongo:latest
-    restart: always
-    volumes:
-      - ./data/db:/data/db
-    ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_DATABASE: intellipro-jwt
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: secret
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
