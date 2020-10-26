@@ -24,7 +24,7 @@ let mongoURI = "";
 if (MONGO_INITDB_DATABASE === undefined && MONGO_INITDB_ROOT_USERNAME === undefined && MONGO_INITDB_ROOT_PASSWORD === undefined) {
   mongoURI = `mongodb+srv://admin:admin@cluster0.ee6d2.mongodb.net/intellipro-jwt?retryWrites=true&w=majority`;
 } else {
-  mongoURI = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_INITDB_DATABASE}`
+  mongoURI = `mongodb://max:max@mongo:27017/${MONGO_INITDB_DATABASE}`
 }
 
 console.log(mongoURI);
